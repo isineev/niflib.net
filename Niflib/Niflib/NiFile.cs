@@ -368,7 +368,7 @@ namespace Niflib
         /// <summary>
         /// Prints the nif tree.
         /// </summary>
-        private void PrintNifTree()
+        public void PrintNifTree()
 		{
 			NiAVObject niAVObject = this.FindRoot();
 			if (niAVObject == null)
