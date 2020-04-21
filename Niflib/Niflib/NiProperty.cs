@@ -35,5 +35,15 @@ namespace Niflib
         public NiProperty(NiFile file, BinaryReader reader) : base(file, reader)
 		{
 		}
-	}
+
+        /// <summary>
+        /// Writes NiProperty to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteNiProperty(BinaryWriter writer)
+        {
+            base.WriteNiObjectNET(writer);
+        }
+
+    }
 }

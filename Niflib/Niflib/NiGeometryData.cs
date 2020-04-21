@@ -17,6 +17,8 @@
  *
  */
 
+using OpenTK.Graphics.ES11;
+
 namespace Niflib
 {
 	#if OpenTK
@@ -252,6 +254,110 @@ namespace Niflib
 			{
 				this.AdditionalDataID = reader.ReadUInt32();
 			}
+		}
+
+		/// <summary>
+		/// Writes NiGeometryData to binary stream
+		/// </summary>
+		/// <param name="writer">The writer</param>
+        public void WriteNiGeometryData(BinaryWriter writer)
+        {
+            base.WriteNiObject(writer);
+
+			var numUvSets = (byte) this.UVSets.Length;
+
+			if (base.Version >= eNifVersion.VER_10_2_0_0)
+			{
+				writer.Write((uint)this.Unkown1);
+			}
+
+			writer.Write((ushort)this.NumVertices);
+
+			if (base.Version >= eNifVersion.VER_10_1_0_0)
+			{
+				writer.Write((byte)this.KeepFlags);
+				writer.Write((byte)this.CompressFlags);
+			}
+
+			writer.WriteBoolean(this.HasVertices, this.Version);
+
+			if (this.HasVertices)
+			{
+                for (int i = 0; i < this.NumVertices; i++)
+                {
+					writer.WriteVector3(this.Vertices[i]);
+                }
+			}
+
+			if (base.Version >= eNifVersion.VER_10_0_1_0)
+			{
+				//int numUvSets = (int)reader.ReadByte();
+				writer.Write((byte)numUvSets);
+				writer.Write((byte)this.TSpaceFlag);
+			}
+
+			writer.WriteBoolean(this.HasNormals, this.Version);
+
+			if (this.HasNormals)
+			{
+                for (int i = 0; i < this.NumVertices; i++)
+                {
+					writer.WriteVector3(this.Normals[i]);
+                }
+            }
+			if (base.Version >= eNifVersion.VER_10_1_0_0)
+			{
+				if (this.HasNormals && (this.TSpaceFlag & 240) != 0)
+				{
+                    for (int i = 0; i < this.NumVertices; i++)
+                    {
+                        writer.WriteVector3(this.Binormals[i]);
+                    }
+                    for (int i = 0; i < this.NumVertices; i++)
+                    {
+                        writer.WriteVector3(this.Tangents[i]);
+                    }
+				}
+			}
+
+			writer.WriteVector3(this.Center);
+			writer.Write((float)this.Radius);
+
+			writer.WriteBoolean(this.HasVertexColors, this.Version);
+			if (this.HasVertexColors)
+			{
+                for (int i = 0; i < this.NumVertices; i++)
+                {
+                    writer.WriteColor4(this.VertexColors[i]);
+                }
+			}
+			if (base.Version <= eNifVersion.VER_4_2_2_0)
+			{
+				//numUvSets = (int)reader.ReadByte();
+				writer.Write((byte)numUvSets);
+				writer.Write((byte)this.TSpaceFlag);
+			}
+			if (base.Version <= eNifVersion.VER_4_0_0_2)
+			{
+				writer.WriteBoolean(this.HasUV, this.Version);
+			}
+
+            foreach (var uvSet in this.UVSets)
+            {
+                foreach (var vector2 in uvSet)
+                {
+                    writer.WriteVector2(vector2);
+                }
+            }
+
+			if (base.Version >= eNifVersion.VER_10_0_1_0)
+            {
+                writer.Write((ushort)this.ConsistencyFlags);
+            }
+			if (base.Version >= eNifVersion.VER_20_0_0_4)
+            {
+                writer.Write((uint)this.AdditionalDataID);
+            }
 		}
 	}
 }

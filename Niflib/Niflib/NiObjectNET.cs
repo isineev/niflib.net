@@ -16,6 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
+using System.Linq;
 
 namespace Niflib
 {
@@ -74,6 +75,37 @@ namespace Niflib
 			if (this.File.Header.Version >= eNifVersion.VER_3_0)
 			{
 				this.Controller = new NiRef<NiTimeController>(reader.ReadUInt32());
+			}
+		}
+
+		/// <summary>
+		/// Writes NiObjectNet to binary stream
+		/// </summary>
+		/// <param name="writer">The writer</param>
+		public void WriteNiObjectNET(BinaryWriter writer)
+		{
+			base.WriteNiObject(writer);
+
+			this.Name.WriteNiString(writer);
+			if (this.File.Header.Version <= eNifVersion.VER_2_3)
+			{
+				throw new Exception("Unsupported Version!");
+			}
+			if (this.File.Header.Version >= eNifVersion.VER_3_0 && this.File.Header.Version <= eNifVersion.VER_4_2_2_0)
+			{
+				this.ExtraData.First().WriteNiRef(writer);
+			}
+			if (this.File.Header.Version >= eNifVersion.VER_10_0_1_0)
+			{
+				writer.Write((uint)this.ExtraData.Length);
+				for (long i = 0; i < this.ExtraData.LongLength; i++)
+				{
+					this.ExtraData[i].WriteNiRef(writer);
+				}
+			}
+			if (this.File.Header.Version >= eNifVersion.VER_3_0)
+			{
+				this.Controller.WriteNiRef(writer);
 			}
 		}
 	}

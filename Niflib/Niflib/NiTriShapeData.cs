@@ -83,5 +83,41 @@ namespace Niflib
 				}
 			}
 		}
-	}
+
+        /// <summary>
+        /// Writes NiTriShapeData to binary stream
+        /// </summary>
+        /// <param name="writer">The writer</param>
+        public void WriteNiTriShapeData(BinaryWriter writer)
+        {
+            base.WriteNiTriBasedGeomData(writer);
+
+            writer.Write((uint)this.NumTrianglePoints);
+
+            if (base.Version >= eNifVersion.VER_10_1_0_0)
+            {
+                writer.WriteBoolean(this.HasTriangles, this.Version);
+            }
+            if (base.Version <= eNifVersion.VER_10_0_1_2 || this.HasTriangles || base.Version >= eNifVersion.VER_10_0_1_3)
+            {
+                for (int i = 0; i < (int)this.NumTriangles; i++)
+                {
+                    this.Triangles[i].WriteTriangle(writer);
+                }
+            }
+            if (base.Version >= eNifVersion.VER_3_1)
+            {
+                writer.Write((ushort)this.MatchGroups.Length);
+
+                foreach (var matchGroup in this.MatchGroups)
+                {
+                    writer.Write((ushort)matchGroup.Length);
+                    foreach (var match in matchGroup)
+                    {
+                        writer.Write((ushort)match);
+                    }
+                }
+            }
+		}
+    }
 }

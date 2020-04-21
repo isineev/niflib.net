@@ -112,5 +112,55 @@ namespace Niflib
 				throw new Exception("unsupported data");
 			}
 		}
+
+        /// <summary>
+        /// Write NiGeometry to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteNiGeometry(BinaryWriter writer)
+        {
+            base.WriteNiAVObject(writer);
+
+            this.Data.WriteNiRef(writer);
+
+            if (base.Version >= eNifVersion.VER_3_3_0_13)
+            {
+                this.SkinInstance.WriteNiRef(writer);
+            }
+            if (base.Version >= eNifVersion.VER_20_2_0_7)
+            {
+                writer.Write((uint) this.MaterialNames.Length);
+                foreach (var materialName in this.MaterialNames)
+                {
+                    materialName.WriteNiString(writer);
+                }
+
+                foreach (var item in this.MaterialExtraData)
+                {
+                    writer.Write(item);
+                }
+
+                writer.Write(this.ActiveMaterial);
+            }
+            if (base.Version >= eNifVersion.VER_10_0_1_0 && base.Version <= eNifVersion.VER_20_1_0_3)
+            {
+                writer.WriteBoolean(this.HasShader, this.Version);
+                if (this.HasShader)
+                {
+                    //this.ShaderName = new NiString(file, reader).Value;
+                    new NiString(this.ShaderName).WriteNiString(writer);
+                    writer.Write((uint) this.UnkownInteger);
+                }
+            }
+            if (base.Version == eNifVersion.VER_10_4_0_1)
+            {
+                //reader.ReadUInt32();
+                writer.Write((uint)0);
+            }
+            if (base.Version >= eNifVersion.VER_20_2_0_7)
+            {
+                throw new Exception("unsupported data");
+            }
+		}
 	}
 }

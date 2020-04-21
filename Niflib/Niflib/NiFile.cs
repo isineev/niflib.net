@@ -189,7 +189,7 @@ namespace Niflib
 				{
 					goto Block_8;
 				}
-				NiObject value = (NiObject)Activator.CreateInstance(expr_E7, new object[]
+                NiObject value = (NiObject)Activator.CreateInstance(expr_E7, new object[]
 				{
 					this,
 					reader
@@ -406,6 +406,91 @@ namespace Niflib
 						this.PrintNifNode(niRef.Object, depth + 1);
 					}
 				}
+			}
+		}
+
+		public void Save(string path)
+		{
+			var dir = Path.GetDirectoryName(path);
+			if (Directory.Exists(dir) == false)
+			{
+				Directory.CreateDirectory(dir);
+			}
+			var stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+			using (var writer = new BinaryWriter(stream))
+            {
+				this.Header.WriteNiHeader(writer);
+                this.WriteNiObjects(writer);
+				this.Footer.WriteNiFooter(writer, this.Version);
+			}
+		}
+
+		/// <summary>
+		/// Writes the ni objects.
+		/// </summary>
+		/// <param name="writer">The Writer.</param>
+		/// <exception cref="Exception">
+		/// Check value is not zero! Invalid file?
+		/// or
+		/// Invalid object type string length!
+		/// </exception>
+		/// <exception cref="NotImplementedException"></exception>
+		private void WriteNiObjects(BinaryWriter writer)
+        {
+            long position = 0;
+            for (uint i = 0; i < this.ObjectsByRef.Count; i++)
+            {
+                var type = this.ObjectsByRef[i].GetType();
+
+#if DEBUG
+				Console.Write($"{type.Name,-32}: start={position = writer.BaseStream.Position,-6}");
+#endif
+
+				if (this.Version >= eNifVersion.VER_5_0_0_1)
+                {
+                    //if (this.Version <= eNifVersion.VER_10_1_0_106 && reader.ReadUInt32() != 0u)
+                    //{
+                    //    break;
+                    //}
+                    //text = this.Header.BlockTypes[(int)this.Header.BlockTypeIndex[num]].Value;
+                }
+                else
+                {
+                    
+
+					writer.Write(type.Name.Length);
+					writer.Write(type.Name.ToCharArray());
+
+                    //if (this.Header.Version < eNifVersion.VER_3_3_0_13)
+                    //{
+                    //    if (text == "Top Level Object")
+                    //    {
+                    //        continue;
+                    //    }
+                    //    if (text == "End Of File")
+                    //    {
+                    //        return;
+                    //    }
+                    //}
+                }
+				//uint key;
+				//if (this.Version < eNifVersion.VER_3_3_0_13)
+
+				//{
+				//    key = reader.ReadUInt32();
+				//}
+				//else
+				//{
+				//    key = (uint)num;
+				//}
+
+                var method = type.GetMethod($"Write{type.Name}", new Type[] {typeof(BinaryWriter)});
+				if (method != null) method.Invoke(this.ObjectsByRef[i], new [] { writer });
+                else throw new NotImplementedException($"Type {type.Name} not implemented IWritable");
+#if DEBUG
+				Console.WriteLine($" end={writer.BaseStream.Position,-6} size={writer.BaseStream.Position - position}");
+#endif
+
 			}
 		}
 	}

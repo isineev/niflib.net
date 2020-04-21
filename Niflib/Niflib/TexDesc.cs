@@ -142,5 +142,49 @@ namespace Niflib
 				}
 			}
 		}
-	}
+
+        /// <summary>
+        /// Writes TexDesc to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteTexDesc(BinaryWriter writer, eNifVersion version)
+        {
+            this.Source.WriteNiRef(writer);
+            if (version <= eNifVersion.VER_20_0_0_5)
+            {
+                writer.Write((uint)this.ClampMode);
+                writer.Write((uint)this.FilterMode);
+            }
+            if (version >= eNifVersion.VER_20_1_0_3)
+            {
+                writer.Write((ushort)this.Flags);
+            }
+            if (version <= eNifVersion.VER_20_0_0_5)
+            {
+                writer.Write((uint)this.UVSetIndex);
+            }
+            if (version <= eNifVersion.VER_10_4_0_1)
+            {
+                writer.Write((short)this.PS2L);
+                writer.Write((short)this.PS2K);
+            }
+            if (version <= eNifVersion.VER_4_1_0_12)
+            {
+                //reader.ReadUInt16();
+                writer.Write((ushort)0);
+            }
+            if (version >= eNifVersion.VER_10_1_0_0)
+            {
+                writer.WriteBoolean(this.HasTextureTransform, version);
+                if (this.HasTextureTransform)
+                {
+                    writer.WriteVector2(this.Translation);
+                    writer.WriteVector2(this.Tiling);
+                    writer.Write((float)this.WRotation);
+                    writer.Write((uint)this.TransformType);
+                    writer.WriteVector2(this.CenterOffset);
+                }
+            }
+        }
+    }
 }

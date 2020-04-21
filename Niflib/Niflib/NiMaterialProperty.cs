@@ -88,5 +88,27 @@ namespace Niflib
 			this.Glossiness = reader.ReadSingle();
 			this.Alpha = reader.ReadSingle();
 		}
-	}
+
+        /// <summary>
+        /// Writes NiMaterialProperty to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteNiMaterialProperty(BinaryWriter writer)
+        {
+            base.WriteNiProperty(writer);
+
+            if (base.Version <= eNifVersion.VER_10_0_1_2)
+            {
+                writer.Write((ushort)this.Flags);
+            }
+
+            writer.WriteColor3(this.AmbientColor);
+            writer.WriteColor3(this.DiffuseColor);
+            writer.WriteColor3(this.SpecularColor);
+            writer.WriteColor3(this.EmissiveColor);
+            writer.Write((float)this.Glossiness);
+            writer.Write((float)this.Alpha);
+        }
+
+    }
 }

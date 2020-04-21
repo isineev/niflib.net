@@ -51,5 +51,21 @@ namespace Niflib
 				}
 			}
 		}
+
+        /// <summary>
+        /// Writes NiFooter to binary stream
+        /// </summary>
+        /// <param name="writer"></param>
+        public void WriteNiFooter(BinaryWriter writer, eNifVersion version)
+        {
+            if (version >= eNifVersion.VER_3_3_0_13)
+            {
+                writer.Write((uint)this.RootNodes.Length);
+                foreach (var rootNode in this.RootNodes)
+                {
+                    rootNode.WriteNiRef(writer);
+                }
+            }
+        }
 	}
 }

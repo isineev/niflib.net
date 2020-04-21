@@ -160,5 +160,73 @@ namespace Niflib
 				this.UnkownInt = reader.ReadUInt32();
 			}
 		}
+
+		/// <summary>
+		/// Writes NiHeader to binary stream
+		/// </summary>
+		/// <param name="writer">The writer</param>
+		public void WriteNiHeader(BinaryWriter writer)
+		{
+            writer.Write(this.VersionString.ToCharArray());
+			writer.Write((byte)0x0A);
+			writer.Write((uint)this.Version);
+
+            if (this.Version >= eNifVersion.VER_20_0_0_4)
+            {
+                throw new Exception("NIF Version not supported yet!");
+            }
+			if (this.Version >= eNifVersion.VER_10_1_0_0)
+            {
+                writer.Write(this.UserVersion);
+            }
+            if (this.Version >= eNifVersion.VER_3_3_0_13)
+            {
+                writer.Write(this.NumBlocks);
+            }
+            if (this.Version >= eNifVersion.VER_10_1_0_0 && (this.UserVersion == 10u || this.UserVersion == 11u))
+            {
+                writer.Write(this.UserVersion2);
+            }
+			if (this.Version == eNifVersion.VER_20_0_0_5)
+            {
+                throw new VersionNotFoundException("Version 20.0.0.5 not supported!");
+            }
+            if (this.Version == eNifVersion.VER_10_0_1_2)
+            {
+                throw new Exception("NIF Version not supported yet!");
+            }
+            if (this.Version >= eNifVersion.VER_10_1_0_0 && (this.UserVersion == 10u || this.UserVersion == 11u))
+            {
+                throw new Exception("NIF Version not supported yet!");
+            }
+
+            
+			if (this.Version >= eNifVersion.VER_10_0_1_0)
+			{
+				writer.Write((ushort)this.BlockTypes.Length);
+
+				for (int i = 0; i < this.BlockTypes.Length; i++)
+				{
+					this.BlockTypes[i].WriteNiString(writer);
+				}
+
+				for (long i = 0; i < this.BlockTypeIndex.LongLength; i++)
+				{
+					writer.Write(this.BlockTypeIndex[i]);
+				}
+			}
+            if (this.Version >= eNifVersion.VER_20_2_0_7)
+            {
+                throw new Exception("NIF Version not supported yet!");
+            }
+            if (this.Version >= eNifVersion.VER_20_1_0_3)
+            {
+                throw new Exception("NIF Version not supported yet!");
+            }
+            if (this.Version >= eNifVersion.VER_10_0_1_0)
+			{
+				writer.Write(this.UnkownInt);
+			}
+		}
 	}
 }

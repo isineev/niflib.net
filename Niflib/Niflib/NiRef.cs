@@ -66,6 +66,15 @@ namespace Niflib
 		}
 
         /// <summary>
+        /// Writes NiRef to binary stream
+        /// </summary>
+        /// <param name="writer">The writer</param>
+        public void WriteNiRef(BinaryWriter writer)
+        {
+            writer.Write((uint)this.RefId);
+        }
+
+        /// <summary>
         /// Determines whether this instance is valid.
         /// </summary>
         /// <returns><c>true</c> if this instance is valid; otherwise, <c>false</c>.</returns>
@@ -85,5 +94,5 @@ namespace Niflib
 				this.Object = (T)((object)file.ObjectsByRef[this.RefId]);
 			}
 		}
-	}
+    }
 }

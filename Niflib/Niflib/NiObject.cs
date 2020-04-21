@@ -53,5 +53,9 @@ namespace Niflib
 		{
 			this.File = file;
 		}
-	}
+
+        public void WriteNiObject(BinaryWriter writer)
+        {
+        }
+    }
 }

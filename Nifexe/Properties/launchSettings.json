@@ -1,8 +1,7 @@
 {
   "profiles": {
     "Nifexe": {
-      "commandName": "Project",
-      "commandLineArgs": "D:\\\\misc_potion_bargain_01.nif"
+      "commandName": "Project"
     }
   }
 }

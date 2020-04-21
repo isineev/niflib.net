@@ -35,5 +35,15 @@ namespace Niflib
         public NiTexture(NiFile file, BinaryReader reader) : base(file, reader)
 		{
 		}
-	}
+
+        /// <summary>
+        /// Writes NiTexture to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteNiTexture(BinaryWriter writer)
+        {
+            base.WriteNiObjectNET(writer);
+        }
+
+    }
 }

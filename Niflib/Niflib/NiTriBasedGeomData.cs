@@ -41,5 +41,16 @@ namespace Niflib
 		{
 			this.NumTriangles = reader.ReadUInt16();
 		}
-	}
+
+        /// <summary>
+        /// Writes NiTriBasedGeomData to binary steam
+        /// </summary>
+        /// <param name="writer">The writer</param>
+        public void WriteNiTriBasedGeomData(BinaryWriter writer)
+        {
+            base.WriteNiGeometryData(writer);
+
+            writer.Write((ushort)this.NumTriangles);
+        }
+    }
 }

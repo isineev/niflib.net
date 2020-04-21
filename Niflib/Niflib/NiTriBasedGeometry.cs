@@ -35,5 +35,15 @@ namespace Niflib
         public NiTriBasedGeometry(NiFile file, BinaryReader reader) : base(file, reader)
 		{
 		}
-	}
+
+        /// <summary>
+        /// Writes NiTriBasedGeometry to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteNiTriBasedGeometry(BinaryWriter writer)
+        {
+            base.WriteNiGeometry(writer);
+        }
+
+    }
 }

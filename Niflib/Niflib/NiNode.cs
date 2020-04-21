@@ -55,5 +55,28 @@ namespace Niflib
 				this.Effects[j] = new NiRef<NiDynamicEffect>(reader.ReadUInt32());
 			}
 		}
-	}
+
+        /// <summary>
+        /// Writes NiNode to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer</param>
+        public void WriteNiNode(BinaryWriter writer)
+        {
+            base.WriteNiAVObject(writer);
+                
+            // Objects
+            writer.Write((uint)this.Children.Length);
+            foreach (var refObj in this.Children)
+            {
+                refObj.WriteNiRef(writer);
+            }
+
+            // Effects
+            writer.Write((uint)this.Effects.Length);
+            foreach (var refEffect in this.Effects)
+            {
+                refEffect.WriteNiRef(writer);
+            }
+        }
+    }
 }

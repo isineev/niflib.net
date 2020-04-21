@@ -187,5 +187,62 @@ namespace Niflib
 				}
 			}
 		}
-	}
+
+        /// <summary>
+        /// Writes NiTexturingProperty to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteNiTexturingProperty(BinaryWriter writer)
+        {
+            base.WriteNiProperty(writer);
+
+            if (base.Version <= eNifVersion.VER_10_0_1_2 || base.Version >= eNifVersion.VER_20_1_0_3)
+            {
+                writer.Write((ushort)this.Flags);
+            }
+            if (base.Version <= eNifVersion.VER_20_0_0_5)
+            {
+                writer.Write((uint)this.ApplyMode);
+            }
+
+            writer.Write((uint)this.TextureCount);
+
+            writer.WriteBoolean(this.BaseTexture != null, this.Version);
+            this.BaseTexture?.WriteTexDesc(writer, this.Version);
+
+            writer.WriteBoolean(this.DarkTexture != null, this.Version);
+            this.DarkTexture?.WriteTexDesc(writer, this.Version);
+
+            writer.WriteBoolean(this.DetailTexture != null, this.Version);
+            this.DetailTexture?.WriteTexDesc(writer, this.Version);
+
+            writer.WriteBoolean(this.GlossTexture != null, this.Version);
+            this.GlossTexture?.WriteTexDesc(writer, this.Version);
+
+            writer.WriteBoolean(this.GlowTexture != null, this.Version);
+            this.GlowTexture?.WriteTexDesc(writer, this.Version);
+
+            var useBumpMap = this.BumpMapTexture != null;// && this.BumpMapLumaScale == 0f && this.BumpMapLumaOffset == 0f && this.BumpMapMatrix == new Vector3(0);
+            writer.WriteBoolean(useBumpMap, this.Version);
+            if (useBumpMap)
+            {
+                this.BumpMapTexture.WriteTexDesc(writer, this.Version);
+                writer.Write(this.BumpMapLumaScale);
+                writer.Write(this.BumpMapLumaOffset);
+                writer.WriteVector3(this.BumpMapMatrix);
+                //reader.ReadSingle();
+                writer.Write((float)0f);
+            }
+
+            writer.WriteBoolean(this.Decal0Texture != null, this.Version);
+            this.Decal0Texture?.WriteTexDesc(writer, this.Version);
+
+
+            if (base.Version >= eNifVersion.VER_10_0_1_0)
+            {
+                throw new NotImplementedException("Not implemented shader texture");
+            }
+		}
+
+    }
 }

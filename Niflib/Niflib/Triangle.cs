@@ -19,14 +19,14 @@
 
 namespace Niflib
 {
-	using System;
-	using System.IO;
+    using System;
+    using System.IO;
 
     /// <summary>
     /// Class Triangle.
     /// </summary>
     public class Triangle
-	{
+    {
         /// <summary>
         /// The x
         /// </summary>
@@ -49,21 +49,33 @@ namespace Niflib
         /// <param name="y">The y.</param>
         /// <param name="z">The z.</param>
         public Triangle(ushort x, ushort y, ushort z)
-		{
-			this.X = x;
-			this.Y = y;
-			this.Z = z;
-		}
+        {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Triangle"/> class.
         /// </summary>
         /// <param name="reader">The reader.</param>
         public Triangle(BinaryReader reader)
-		{
-			this.X = reader.ReadUInt16();
-			this.Y = reader.ReadUInt16();
-			this.Z = reader.ReadUInt16();
-		}
-	}
+        {
+            this.X = reader.ReadUInt16();
+            this.Y = reader.ReadUInt16();
+            this.Z = reader.ReadUInt16();
+        }
+
+        /// <summary>
+        /// Writes Triangle to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteTriangle(BinaryWriter writer)
+        {
+            writer.Write((ushort)this.X);
+            writer.Write((ushort)this.Y);
+            writer.Write((ushort)this.Z);
+        }
+
+    }
 }

@@ -114,5 +114,64 @@ namespace Niflib
 				this.PersistentRenderData = reader.ReadBoolean(Version);
 			}
 		}
-	}
+
+        /// <summary>
+        /// Writes NiSourceTexture to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer</param>
+        public void WriteNiSourceTexture(BinaryWriter writer)
+        {
+            base.WriteNiTexture(writer);
+
+            //this.IsStatic = true;
+
+            if (this.Version == eNifVersion.VER_4_0_0_2)
+            {
+                writer.Write(this.UseExternal);
+            }
+            else writer.WriteBoolean(this.UseExternal, this.Version);
+
+            if (this.UseExternal)
+            {
+                this.FileName.WriteNiString(writer);
+                if (base.Version >= eNifVersion.VER_10_1_0_0)
+                {
+                    //reader.ReadUInt32();
+                    writer.Write((uint)0);
+                }
+            }
+            if (!this.UseExternal)
+            {
+                if (base.Version <= eNifVersion.VER_10_0_1_0)
+                {
+                    //reader.ReadByte();
+                    writer.Write((byte)0x00);
+                }
+                if (base.Version >= eNifVersion.VER_10_1_0_0)
+                {
+                    this.FileName.WriteNiString(writer);
+                }
+                this.InternalTexture.WriteNiRef(writer);
+            }
+            writer.Write((uint)this.PixelLayout);
+            writer.Write((uint)this.UseMipmaps);
+            writer.Write((uint)this.AlphaFormat);
+
+            if (this.Version == eNifVersion.VER_4_0_0_2)
+            {
+                writer.Write(this.IsStatic);
+            }
+            else writer.WriteBoolean(this.IsStatic, this.Version);
+
+            if (base.Version >= eNifVersion.VER_10_1_0_106)
+            {
+                writer.WriteBoolean(this.DirectRender, this.Version);
+            }
+            if (base.Version >= eNifVersion.VER_20_2_0_7)
+            {
+                writer.WriteBoolean(this.PersistentRenderData, this.Version);
+            }
+        }
+
+    }
 }

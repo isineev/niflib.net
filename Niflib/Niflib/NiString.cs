@@ -33,6 +33,14 @@ namespace Niflib
         public string Value;
 
         /// <summary>
+        /// Initializes a new instance of the NiSting class.
+        /// </summary>
+        /// <param name="value">String value.</param>
+        public NiString(string value)
+        {
+            this.Value = value;
+        }
+        /// <summary>
         /// Initializes a new instance of the <see cref="NiString"/> class.
         /// </summary>
         /// <param name="file">The file.</param>
@@ -46,6 +54,16 @@ namespace Niflib
 		}
 
         /// <summary>
+        /// Writes NiString to binary stream.
+        /// </summary>
+        /// <param name="writer">The writer.</param>
+        public void WriteNiString(BinaryWriter writer)
+        {
+            writer.Write((uint)this.Value.Length);
+            writer.Write(this.Value.ToCharArray());
+        }
+
+        /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
@@ -53,5 +71,5 @@ namespace Niflib
 		{
 			return this.Value;
 		}
-	}
+    }
 }

@@ -151,5 +151,58 @@ namespace Niflib
 				this.CollisionObject = new NiRef<NiCollisionObject>(reader.ReadUInt32());
 			}
 		}
+
+
+		public void WriteNiAVObject(BinaryWriter writer)
+		{
+			base.WriteNiObjectNET(writer);
+
+			if (this.File.Header.Version >= eNifVersion.VER_3_0)
+			{
+				writer.Write(this.Flags);
+			}
+			if (this.File.Header.Version >= eNifVersion.VER_20_2_0_7 && this.File.Header.UserVersion == 11u && this.File.Header.UserVersion2 > 26u)
+			{
+				writer.Write((ushort)this.UnkownShort1);
+			}
+
+			writer.WriteVector3(this.Translation);
+			writer.WriteMatrix33(this.Rotation);
+			writer.Write(this.Scale);
+
+			if (this.File.Header.Version <= eNifVersion.VER_4_2_2_0)
+			{
+				writer.WriteVector3(this.Velocity);
+			}
+			if (this.File.Header.Version <= eNifVersion.VER_20_2_0_7 || this.File.Header.UserVersion <= 11u)
+			{
+				writer.Write(this.Properties.Length);
+                foreach (var property in this.Properties)
+                {
+                    property.WriteNiRef(writer);
+                }
+			}
+			if (this.File.Header.Version <= eNifVersion.VER_2_3)
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					writer.Write(this.UnkownInts1[i]);
+				}
+				writer.Write(this.UnkownByte);
+			}
+			if (this.File.Header.Version >= eNifVersion.VER_3_0 && this.File.Header.Version <= eNifVersion.VER_4_2_2_0)
+			{
+				writer.WriteBoolean(this.HasBoundingBox, this.Version);
+				//if (this.HasBoundingBox)
+				//{
+				//	throw new Exception("Cannot read BoundingBoxes yet");
+				//}
+			}
+			if (this.File.Header.Version >= eNifVersion.VER_10_0_1_0)
+			{
+				//this.CollisionObject = new NiRef<NiCollisionObject>(reader.ReadUInt32());
+				this.CollisionObject.WriteNiRef(writer);
+			}
+		}
 	}
 }
